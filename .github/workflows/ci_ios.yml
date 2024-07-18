@@ -72,7 +72,7 @@ jobs:
       run: |
         PKG_CONFIG_LIBDIR=$HOME/ffmpeg-install-${{ matrix.ffmpeg_version }}/lib/pkgconfig \
         LDFLAGS="$LDFLAGS -L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/" \
-        meson setup --cross-file .github/meson-ios-${{ matrix.arch }}.ini builddir
+        meson setup --cross-file .github/meson-ios-${{ matrix.arch }}.ini -Dtests=false -Dplayer=disabled builddir
         meson compile -C builddir -v
 
     - name: Upload Logs
