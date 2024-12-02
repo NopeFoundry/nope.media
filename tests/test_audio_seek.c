@@ -3,15 +3,18 @@
 
 #include <nopemd.h>
 
+#define FLAG_RESAMPLE (1<<0)
+
 int main(int ac, char **av)
 {
-    if (ac < 2) {
-        fprintf(stderr, "Usage: %s <media.mkv> [<use_pkt_duration>]\n", av[0]);
+    if (ac < 3) {
+        fprintf(stderr, "Usage: %s <media.mkv> <flags> [<use_pkt_duration>]\n", av[0]);
         return -1;
     }
 
     const char *filename = av[1];
-    const int use_pkt_duration = ac > 2 ? atoi(av[2]) : 0;
+    const int flags = atoi(av[2]);
+    const int use_pkt_duration = ac > 3 ? atoi(av[3]) : 0;
 
     int ret = 0;
     double last_ts = 0.0;
@@ -25,6 +28,10 @@ int main(int ac, char **av)
     nmd_set_option(s, "avselect", NMD_SELECT_AUDIO);
     nmd_set_option(s, "audio_texture", 0);
     nmd_set_option(s, "use_pkt_duration", use_pkt_duration);
+
+    if (flags & FLAG_RESAMPLE) {
+         nmd_set_option(s, "filters", "aformat=sample_fmts=flt:sample_rates=48000");
+    }
 
     for (int i = 0; i < 10; i++) {
         int ret = nmd_get_next_frame(s, &frame);

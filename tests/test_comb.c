@@ -24,6 +24,7 @@ static int action_prefetch(struct nmd_ctx *s, int opt_test_flags)
 #define FLAG_START_TIME    (1<<0)
 #define FLAG_END_TIME      (1<<1)
 #define FLAG_AUDIO         (1<<2)
+#define FLAG_RESAMPLE      (1<<3)
 
 static int action_fetch_info(struct nmd_ctx *s, int opt_test_flags)
 {
@@ -216,6 +217,10 @@ static int exec_comb(const char *filename, uint64_t comb, int opt_test_flags, in
     if (opt_test_flags & FLAG_START_TIME) nmd_set_option(s, "start_time", TESTVAL_START_TIME);
     if (opt_test_flags & FLAG_END_TIME)   nmd_set_option(s, "end_time",   TESTVAL_END_TIME);
     if (opt_test_flags & FLAG_AUDIO)      nmd_set_option(s, "avselect",   NMD_SELECT_AUDIO);
+
+    if ((opt_test_flags & FLAG_AUDIO) && (opt_test_flags & FLAG_RESAMPLE)) {
+         nmd_set_option(s, "filters", "aformat=sample_fmts=flt:sample_rates=48000");
+    }
 
     for (int i = 0; i < NB_ACTIONS; i++) {
         const int action = GET_ACTION(comb, i);

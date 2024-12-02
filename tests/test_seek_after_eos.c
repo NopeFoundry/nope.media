@@ -6,6 +6,7 @@
 #define FLAG_SKIP          (1<<0)
 #define FLAG_END_TIME      (1<<1)
 #define FLAG_AUDIO         (1<<2)
+#define FLAG_RESAMPLE      (1<<3)
 
 int main(int ac, char **av)
 {
@@ -36,6 +37,10 @@ int main(int ac, char **av)
     nmd_set_option(s, "start_time", skip);
     nmd_set_option(s, "end_time", end_time);
     nmd_set_option(s, "use_pkt_duration", use_pkt_duration);
+
+    if (avselect == NMD_SELECT_AUDIO && (flags & FLAG_RESAMPLE)) {
+         nmd_set_option(s, "filters", "aformat=sample_fmts=flt:sample_rates=48000");
+    }
 
     printf("run #1 (avselect=%d end_time=%f)\n", avselect, end_time);
     for (;;) {
